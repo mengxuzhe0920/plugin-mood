@@ -1,0 +1,17 @@
+apiVersion: plugin.halo.run/v1alpha1
+kind: Plugin
+metadata:
+  name: PluginMood
+spec:
+  enabled: true
+  requires: ">=2.25.0"
+  version: "0.1.0"
+  displayName: 小窝心情
+  description: 在 UC 个人中心侧边栏加入「小窝心情」入口，把每天的心情映射成天气并记录；可看全站今日心情云图与自己的心情日历。
+  author:
+    name: WorkBuddy
+    website: https://sams-house.top
+  homepage: https://sams-house.top/mood/
+  issues: https://sams-house.top/mood/
+  license:
+    - name: MIT

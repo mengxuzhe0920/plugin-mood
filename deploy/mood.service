@@ -1,0 +1,15 @@
+[Unit]
+Description=SamHouse Mood Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/mood
+ExecStart=/usr/bin/python3 /opt/mood/server.py
+Restart=always
+RestartSec=3
+Environment=MOOD_LISTEN=127.0.0.1
+Environment=MOOD_PORT=8323
+
+[Install]
+WantedBy=multi-user.target

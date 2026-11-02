@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.db
+*.log
+
+# 编译产物（由 build.py / pack.py 重新生成）
+build/
+dist/*.jar
+
+# Node（UI 源码构建依赖）
+node_modules/
+
+# 本地环境
+.env
+.venv/
+
+# OS / 编辑器
+.DS_Store
+Thumbs.db
+.vscode/
