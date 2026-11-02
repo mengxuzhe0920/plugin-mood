@@ -37,6 +37,11 @@
     box-shadow:0 10px 30px rgba(0,0,0,.06);transition:background .8s ease;
     background:linear-gradient(180deg,#fff7e6,#ffe9c2);
   }
+  /* 天空顶部柔光，增加层次（不挡交互） */
+  .sky::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(130% 90% at 50% 4%,rgba(255,255,255,.18),transparent 55%);}
+  /* 彩虹场景下，大 emoji 移到底部，避免与拱形重叠 */
+  .sky.rainbow .big-emoji{top:auto;bottom:42px;transform:translate(-50%,0);font-size:54px;opacity:.92;}
   .sky .caption{
     position:absolute;left:0;right:0;bottom:16px;text-align:center;
     font-size:14px;color:rgba(58,58,54,.7);padding:0 16px;
@@ -48,16 +53,24 @@
   }
 
   /* 太阳 */
-  .sun{position:absolute;top:36px;left:50%;transform:translateX(-50%);width:84px;height:84px;border-radius:50%;
-    background:radial-gradient(circle at 50% 50%,#fff3c4,#ffce5c);box-shadow:0 0 40px 12px rgba(255,206,92,.55);}
-  .sun::before{content:"";position:absolute;inset:-22px;border-radius:50%;
-    background:conic-gradient(from 0deg,transparent 0 8deg,rgba(255,206,92,.45) 8deg 10deg,transparent 10deg 30deg);
-    animation:spin 18s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes sunpulse{0%,100%{box-shadow:0 0 28px 8px rgba(255,193,77,.50),0 0 60px 18px rgba(255,193,77,.20);}
+    50%{box-shadow:0 0 38px 13px rgba(255,193,77,.64),0 0 86px 28px rgba(255,193,77,.30);}}
+  .sun{position:absolute;top:34px;left:50%;transform:translateX(-50%);width:76px;height:76px;border-radius:50%;
+    background:radial-gradient(circle at 38% 34%,#fff7d8 0%,#ffd860 56%,#ffb43c 100%);
+    box-shadow:0 0 28px 8px rgba(255,193,77,.50),0 0 60px 18px rgba(255,193,77,.20);
+    animation:sunpulse 4s ease-in-out infinite;}
+  .sun::before{content:"";position:absolute;inset:-30px;border-radius:50%;
+    background:repeating-conic-gradient(from 0deg,rgba(255,199,86,.55) 0deg 5deg,transparent 5deg 17deg);
+    -webkit-mask:radial-gradient(circle,transparent 56%,#000 57%);
+            mask:radial-gradient(circle,transparent 56%,#000 57%);
+    animation:spin 30s linear infinite;}
 
   /* 云 */
-  .cloud{position:absolute;background:#fff;border-radius:50px;opacity:.92;filter:drop-shadow(0 6px 10px rgba(0,0,0,.05));}
-  .cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%;}
+  .cloud{position:absolute;border-radius:50px;opacity:.96;
+    background:linear-gradient(180deg,#ffffff 0%,#eef2f8 100%);
+    box-shadow:0 8px 18px rgba(90,110,140,.12);}
+  .cloud::before,.cloud::after{content:"";position:absolute;background:#ffffff;border-radius:50%;}
   .cloud.c1{width:110px;height:34px;top:60px;animation:drift 26s linear infinite;}
   .cloud.c1::before{width:46px;height:46px;top:-20px;left:18px;}
   .cloud.c1::after{width:34px;height:34px;top:-12px;left:58px;}
@@ -76,12 +89,17 @@
   .flash.go{animation:flash 2.6s ease-in-out infinite;}
   @keyframes flash{0%,92%,100%{opacity:0;}94%{opacity:.55;}96%{opacity:.1;}98%{opacity:.4;}}
 
-  /* 彩虹 */
-  .rainbow{position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);
-    width:300px;height:150px;border-radius:300px 300px 0 0;
-    background:linear-gradient(#ff595e,#ffca3a,#8ac926,#1982c4,#6a4c93);
-    -webkit-mask:radial-gradient(circle at 50% 100%,transparent 96px,#000 97px);
-    mask:radial-gradient(circle at 50% 100%,transparent 96px,#000 97px);opacity:.9;}
+  /* 彩虹（拱形：大圆圆心沉到天空下方，仅上半弧露出，形成横跨天空的彩虹） */
+  .rainbow{position:absolute;left:50%;bottom:-260px;width:440px;height:440px;transform:translateX(-50%);
+    border-radius:50%;opacity:.92;
+    background:radial-gradient(circle at 50% 50%,
+      transparent 0 63%,
+      #ff5f6d 63% 69%,
+      #ff9a3c 69% 75%,
+      #ffe14d 75% 81%,
+      #6fcf57 81% 87%,
+      #4aa3df 87% 93%,
+      #9b6bd6 93% 100%);}
 
   /* 雪 */
   .snowflake{position:absolute;top:-10px;color:#fff;font-size:14px;opacity:.9;animation:fall-snow linear infinite;}
@@ -284,7 +302,7 @@ function buildSky(k){
   }else if(k==='thunder'){
     let h='<div class="flash go"></div>'; for(let i=0;i<46;i++){const l=Math.random()*100;const d=(Math.random()*0.7+0.5).toFixed(2);const delay=(Math.random()*2).toFixed(2);h+=`<div class="rain-drop" style="left:${l}%;animation-duration:${d}s;animation-delay:${delay}s"></div>`;} sky.insertAdjacentHTML('beforeend',h);
   }else if(k==='rainbow'){
-    sky.insertAdjacentHTML('beforeend','<div class="rainbow"></div>');
+    sky.insertAdjacentHTML('beforeend','<div class="cloud c1" style="opacity:.8"></div><div class="cloud c2" style="opacity:.7"></div><div class="rainbow"></div>');
   }else if(k==='snow'){
     let h=''; for(let i=0;i<36;i++){const l=Math.random()*100;const d=(Math.random()*3+3).toFixed(2);const delay=(Math.random()*4).toFixed(2);const sc=(Math.random()*0.8+0.6).toFixed(2);h+=`<div class="snowflake" style="left:${l}%;animation-duration:${d}s;animation-delay:${delay}s;transform:scale(${sc})">❄️</div>`;} sky.insertAdjacentHTML('beforeend',h);
   }else if(k==='star'){
