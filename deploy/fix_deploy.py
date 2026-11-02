@@ -3,7 +3,7 @@
 """修正部署：清掉反斜杠误建文件，用正斜杠重新上传 server.py + static，重启服务并自检。"""
 import os, paramiko, time, datetime
 
-HOST, USER, PASS = "191.40.37.234", "root", "REDACTED-ROTATE-ME"
+import _secret; HOST, USER, PASS = _secret.HOST, _secret.USER, _secret.PASS
 LOCAL = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(LOCAL)
 REMOTE_DIR = "/opt/mood"

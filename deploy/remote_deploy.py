@@ -3,7 +3,7 @@
 """SSH 部署小窝心情后端到服务器：上传 server.py + static，装 systemd，改 nginx，重载，自检。"""
 import os, paramiko, socket, time, datetime
 
-HOST, USER, PASS = "191.40.37.234", "root", "REDACTED-ROTATE-ME"
+import _secret; HOST, USER, PASS = _secret.HOST, _secret.USER, _secret.PASS
 MOOD_PORT = "8325"
 LOCAL = os.path.dirname(os.path.abspath(__file__))   # deploy/
 ROOT = os.path.dirname(LOCAL)                          # plugin-mood/

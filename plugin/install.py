@@ -140,7 +140,7 @@ def purge_bundle_cache():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
-        ssh.connect("191.40.37.234", 22, "root", "REDACTED-ROTATE-ME",
+        import sys as _sys, os as _os; _sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))), "deploy")); import _secret; ssh.connect(_secret.HOST, 22, _secret.USER, _secret.PASS,
                     timeout=25, banner_timeout=45, auth_timeout=45,
                     allow_agent=False, look_for_keys=False)
         cmd = ("find /www/wwwroot/sams-house.top/bundle_cache_dir -type f -delete 2>/dev/null; "

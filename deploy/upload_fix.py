@@ -3,7 +3,7 @@ import paramiko, os, base64, time
 VHOST = "/www/server/panel/vhost/nginx/sams-house.top.conf"
 LOCAL = r"C:/Users/sam/WorkBuddy/2026-11-02-20-00-30/plugin-mood/static/index.html"
 REMOTE = "/opt/mood/static/index.html"
-HOST, USER, PASS = "191.40.37.234", "root", "REDACTED-ROTATE-ME"
+import _secret; HOST, USER, PASS = _secret.HOST, _secret.USER, _secret.PASS
 
 def connect():
     ssh = paramiko.SSHClient()

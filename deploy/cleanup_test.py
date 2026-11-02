@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import paramiko
-HOST, USER, PASS = "191.40.37.234", "root", "REDACTED-ROTATE-ME"
+import _secret; HOST, USER, PASS = _secret.HOST, _secret.USER, _secret.PASS
 ssh = paramiko.SSHClient(); ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 ssh.connect(HOST, 22, USER, PASS, timeout=25, banner_timeout=45, auth_timeout=45, allow_agent=False, look_for_keys=False)
 cmd = ("python3 -c \"import sqlite3;c=sqlite3.connect('/opt/mood/mood.db');"

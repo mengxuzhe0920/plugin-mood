@@ -40,8 +40,8 @@
   /* 天空顶部柔光，增加层次（不挡交互） */
   .sky::after{content:"";position:absolute;inset:0;pointer-events:none;
     background:radial-gradient(130% 90% at 50% 4%,rgba(255,255,255,.18),transparent 55%);}
-  /* 彩虹场景下，大 emoji 移到底部，避免与拱形重叠 */
-  .sky.rainbow .big-emoji{top:auto;bottom:42px;transform:translate(-50%,0);font-size:54px;opacity:.92;}
+  /* 彩虹场景下，大 emoji 缩小放进拱门里 */
+  .sky.rainbow .big-emoji{top:auto;bottom:34px;transform:translate(-50%,0);font-size:42px;opacity:.95;}
   .sky .caption{
     position:absolute;left:0;right:0;bottom:16px;text-align:center;
     font-size:14px;color:rgba(58,58,54,.7);padding:0 16px;
@@ -56,15 +56,19 @@
   @keyframes spin{to{transform:rotate(360deg);}}
   @keyframes sunpulse{0%,100%{box-shadow:0 0 28px 8px rgba(255,193,77,.50),0 0 60px 18px rgba(255,193,77,.20);}
     50%{box-shadow:0 0 38px 13px rgba(255,193,77,.64),0 0 86px 28px rgba(255,193,77,.30);}}
-  .sun{position:absolute;top:34px;left:50%;transform:translateX(-50%);width:76px;height:76px;border-radius:50%;
-    background:radial-gradient(circle at 38% 34%,#fff7d8 0%,#ffd860 56%,#ffb43c 100%);
-    box-shadow:0 0 28px 8px rgba(255,193,77,.50),0 0 60px 18px rgba(255,193,77,.20);
+  .sun{position:absolute;top:38px;left:50%;transform:translateX(-50%);width:74px;height:74px;border-radius:50%;
+    background:radial-gradient(circle at 38% 34%,#fff9e0 0%,#ffd860 58%,#ffb43c 100%);
+    box-shadow:0 0 26px 8px rgba(255,193,77,.45),0 0 64px 22px rgba(255,193,77,.18);
     animation:sunpulse 4s ease-in-out infinite;}
-  .sun::before{content:"";position:absolute;inset:-30px;border-radius:50%;
-    background:repeating-conic-gradient(from 0deg,rgba(255,199,86,.55) 0deg 5deg,transparent 5deg 17deg);
-    -webkit-mask:radial-gradient(circle,transparent 56%,#000 57%);
-            mask:radial-gradient(circle,transparent 56%,#000 57%);
-    animation:spin 30s linear infinite;}
+  /* 8 道柔和光芒：细扇条 + 轻微模糊，避免灯泡感 */
+  .sun::before{content:"";position:absolute;inset:-34px;border-radius:50%;
+    background:repeating-conic-gradient(from 6deg,rgba(255,190,70,.6) 0deg 5deg,transparent 5deg 45deg);
+    -webkit-mask:radial-gradient(circle,transparent 60%,#000 62% 90%,transparent 92%);
+            mask:radial-gradient(circle,transparent 60%,#000 62% 90%,transparent 92%);
+    filter:blur(1.2px);
+    animation:spin 46s linear infinite;}
+  /* 晴天由 CSS 太阳出镜，隐藏大 emoji 避免叠出锯齿 */
+  .sky.sunny .big-emoji{display:none;}
 
   /* 云 */
   .cloud{position:absolute;border-radius:50px;opacity:.96;
@@ -89,17 +93,19 @@
   .flash.go{animation:flash 2.6s ease-in-out infinite;}
   @keyframes flash{0%,92%,100%{opacity:0;}94%{opacity:.55;}96%{opacity:.1;}98%{opacity:.4;}}
 
-  /* 彩虹（拱形：大圆圆心沉到天空下方，仅上半弧露出，形成横跨天空的彩虹） */
-  .rainbow{position:absolute;left:50%;bottom:-260px;width:440px;height:440px;transform:translateX(-50%);
-    border-radius:50%;opacity:.92;
-    background:radial-gradient(circle at 50% 50%,
-      transparent 0 63%,
-      #ff5f6d 63% 69%,
-      #ff9a3c 69% 75%,
-      #ffe14d 75% 81%,
-      #6fcf57 81% 87%,
-      #4aa3df 87% 93%,
-      #9b6bd6 93% 100%);}
+  /* 彩虹弧（类名用 rainbow-arc，避免与天空的 .sky.rainbow 修饰类冲突）
+     拱形：半圆完全含在天空内，圆心在底边中点，六色环带向外渐变 */
+  .rainbow-arc{position:absolute;left:50%;bottom:-6px;width:360px;height:180px;transform:translateX(-50%);
+    opacity:.92;pointer-events:none;
+    background:radial-gradient(circle at 50% 100%,
+      transparent 0 82px,
+      #ff5f6d 83px 95px,
+      #ff9a3c 96px 108px,
+      #ffe14d 109px 121px,
+      #6fcf57 122px 134px,
+      #4aa3df 135px 147px,
+      #9b6bd6 148px 160px,
+      transparent 161px);}
 
   /* 雪 */
   .snowflake{position:absolute;top:-10px;color:#fff;font-size:14px;opacity:.9;animation:fall-snow linear infinite;}
@@ -292,7 +298,7 @@ function selectWeather(k){
 // 天空粒子（雨/雪/星）
 function buildSky(k){
   const sky = document.getElementById('sky');
-  sky.querySelectorAll('.sun,.cloud,.rain-drop,.flash,.rainbow,.snowflake,.star-dot,.moon').forEach(e=>e.remove());
+  sky.querySelectorAll('.sun,.cloud,.rain-drop,.flash,.rainbow-arc,.snowflake,.star-dot,.moon').forEach(e=>e.remove());
   if(k==='sunny'){
     const s=document.createElement('div'); s.className='sun'; sky.appendChild(s);
   }else if(k==='cloudy'){
@@ -302,7 +308,7 @@ function buildSky(k){
   }else if(k==='thunder'){
     let h='<div class="flash go"></div>'; for(let i=0;i<46;i++){const l=Math.random()*100;const d=(Math.random()*0.7+0.5).toFixed(2);const delay=(Math.random()*2).toFixed(2);h+=`<div class="rain-drop" style="left:${l}%;animation-duration:${d}s;animation-delay:${delay}s"></div>`;} sky.insertAdjacentHTML('beforeend',h);
   }else if(k==='rainbow'){
-    sky.insertAdjacentHTML('beforeend','<div class="cloud c1" style="opacity:.8"></div><div class="cloud c2" style="opacity:.7"></div><div class="rainbow"></div>');
+    sky.insertAdjacentHTML('beforeend','<div class="cloud c1" style="opacity:.8"></div><div class="cloud c2" style="opacity:.7"></div><div class="rainbow-arc"></div>');
   }else if(k==='snow'){
     let h=''; for(let i=0;i<36;i++){const l=Math.random()*100;const d=(Math.random()*3+3).toFixed(2);const delay=(Math.random()*4).toFixed(2);const sc=(Math.random()*0.8+0.6).toFixed(2);h+=`<div class="snowflake" style="left:${l}%;animation-duration:${d}s;animation-delay:${delay}s;transform:scale(${sc})">❄️</div>`;} sky.insertAdjacentHTML('beforeend',h);
   }else if(k==='star'){
